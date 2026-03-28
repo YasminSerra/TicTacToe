@@ -1,6 +1,11 @@
 package org.example;
 
 import java.util.Scanner;
+enum StatusGame{
+    EMPATE,
+    EM_ANDAMENTO,
+    VENCEDOR;
+}
 
 public class TicTacToe {
     public static void main(String[] args) {
@@ -27,6 +32,10 @@ public class TicTacToe {
                 System.out.println("Valor inválido!");
                 continue;
             }
+            if (tabuleiro[linha][coluna] != null){
+                System.out.println("Posição já escolhida. Escolha outra posição");
+                continue;
+            }
 
             tabuleiro[linha][coluna] = turno == 1 ? jogador1 : jogador2;
 
@@ -37,30 +46,82 @@ public class TicTacToe {
                 }
                 System.out.print("|\n");
             }
+            StatusGame resultado = verificaResultado(tabuleiro,turno == 1 ? jogador1 : jogador2);
+            if (!resultado.equals(StatusGame.EM_ANDAMENTO)){
+                if (resultado.equals(StatusGame.VENCEDOR)){
+                    System.out.println("Jogador " + turno + " venceu!!!");
+                }
+                else{
+                    System.out.println("Empate!!!!");
+                }
 
-           if (jogoFinalizado(tabuleiro)){
                System.out.println("Deseja continuar jogando? 1 =  Sim, 2 = Não");
                int continuar = sc.nextInt();
 
                if (continuar == 2) {
                    break;
                }
+               tabuleiro = new String[3][3];
+               turno = 1;
+               continue;
            }
 
             turno = turno == 1 ? 2 : 1;
         }
     }
 
-    public static boolean jogoFinalizado(String[][] tabuleiro){
+    public static StatusGame verificaResultado(String[][] tabuleiro, String jogador){
+        if (venceuLinha(tabuleiro,jogador)){
+            return StatusGame.VENCEDOR;
+        }
+        if (venceuDiagonal(tabuleiro,jogador)){
+            return StatusGame.VENCEDOR;
+        }
+        if (venceuColuna(tabuleiro,jogador)){
+            return StatusGame.VENCEDOR;
+        }
         for (int i = 0; i < 3; i++){
             for (int j = 0; j < 3; j++) {
                if (tabuleiro[i][j] == null){
-                   return false;
+                   return StatusGame.EM_ANDAMENTO;
                }
             }
 
         }
-         return true;
+         return StatusGame.EMPATE;
+    }
+    public static boolean venceuLinha(String[][] tabuleiro, String jogador) {
+        if (jogador.equals(tabuleiro[0][0]) && jogador.equals(tabuleiro[0][1]) && jogador.equals(tabuleiro[0][2])){
+            return true;
+        }
+        if (jogador.equals(tabuleiro[1][0]) && jogador.equals(tabuleiro[1][1]) && jogador.equals(tabuleiro[1][2])){
+            return true;
+        }
+        if (jogador.equals(tabuleiro[2][0]) && jogador.equals(tabuleiro[2][1]) && jogador.equals(tabuleiro[2][2])){
+            return true;
+        }
+        return false;
     }
 
+    public static boolean venceuColuna(String[][] tabuleiro, String jogador) {
+        if (jogador.equals(tabuleiro[0][0]) && jogador.equals(tabuleiro[1][0]) && jogador.equals(tabuleiro[2][0])){
+            return true;
+        }
+        if (jogador.equals(tabuleiro[0][1]) && jogador.equals(tabuleiro[1][1]) && jogador.equals(tabuleiro[2][1])){
+            return true;
+        }
+        if (jogador.equals(tabuleiro[0][2]) && jogador.equals(tabuleiro[1][2]) && jogador.equals(tabuleiro[2][2])){
+            return true;
+        }
+        return false;
+    }
+    public static boolean venceuDiagonal(String[][] tabuleiro, String jogador) {
+        if (jogador.equals(tabuleiro[0][0]) && jogador.equals(tabuleiro[1][1]) && jogador.equals(tabuleiro[2][2])){
+            return true;
+        }
+        if (jogador.equals(tabuleiro[0][2]) && jogador.equals(tabuleiro[1][1]) && jogador.equals(tabuleiro[2][0])){
+            return true;
+        }
+        return false;
+    }
 }
